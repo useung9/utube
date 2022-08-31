@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="membersub" >
+	<select id="sublist" resultType="com.prac.utube.vo.Membersub">
+		select * from member_sub where sub_email = #{user_email}
+	</select>
+	
+	<insert id="addsub">
+		insert into member_sub(sub_email,sub_subimg,sub_subname,sub_suburl)
+		values(#{sub_email}, #{sub_subimg}, #{sub_subname}, #{sub_suburl})
+	</insert>
+  </mapper>

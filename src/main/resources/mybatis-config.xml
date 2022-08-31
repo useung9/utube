@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org/DTD config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<!-- null 입력 전면 허용 -->
+	<settings>
+		<setting name="jdbcTypeForNull" value="NULL" />
+		<setting name="callSettersOnNulls" value="true"/>
+	</settings>
+	
+	<typeAliases>
+		<typeAlias type="com.prac.utube.vo.Member" alias="member"/>
+		<typeAlias type="com.prac.utube.vo.Membersub" alias="membersub"/>
+		<typeAlias type="com.prac.utube.vo.Board" alias="board"/>
+		<typeAlias type="com.prac.utube.vo.BoardReply" alias="reply"/>
+		<typeAlias type="com.prac.utube.vo.Expression" alias="expression"/>
+	</typeAliases>
+	
+</configuration>

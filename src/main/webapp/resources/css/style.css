@@ -1,0 +1,125 @@
+@charset "UTF-8";
+* {
+  box-sizing: border-box;
+  font-family: 'Noto Sans KR', sans-serif;
+  border-radius: 5px;
+}
+ 
+body {
+  margin: 0;
+  background-color: #1BBC9B;
+}
+ 
+.login-form {
+    width: 300px;
+    background-color: #EEEFF1;
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: 50px;
+    padding: 20px;
+    text-align: center;
+    border: none;
+    
+}
+ 
+.text-field {
+      font-size: 14px;
+      padding: 10px;
+      border: none;
+      width: 260px;
+      margin-bottom: 10px;
+ 
+}
+ 
+.submit-btn {
+  font-size: 14px;
+  border: none;
+  padding: 10px;
+  width: 260px;
+  background-color: #1BBC9B;
+  margin-bottom: 30px;
+  color: white;
+}
+ 
+.links {
+    text-align: center;
+}
+ 
+.links a {
+  font-size: 12px;
+  color: #9B9B9B;
+}
+
+/* Board Detail */
+.icon {
+	width: 24px;
+	height: 24px;
+}
+
+.video {
+	width: auto;
+	height: auto;
+}
+h4{
+	font-size: 2em;
+    font-weight: bold;
+        margin-block-start: 0.67em;
+    margin-block-end: 0.67em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+}
+
+.nonReply{
+	align-content: center;
+}
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300&display=swap');
+
+html,
+body {
+    height: 100%
+}
+
+body {
+    display: grid;
+    place-items: center;
+	font-family: 'Source Sans Pro', sans-serif;
+    background: #9C27B0
+}
+
+
+
+
+ .card {
+     position: relative;
+     display: flex;
+     padding:20px;
+     flex-direction: column;
+     min-width: 0;
+     word-wrap: break-word;
+     background-color: #fff;
+     background-clip: border-box;
+     border: 1px solid #d2d2dc;
+     border-radius: 11px;
+     -webkit-box-shadow: 0px 0px 5px 0px rgb(249, 249, 250);
+     -moz-box-shadow: 0px 0px 5px 0px rgba(212, 182, 212, 1);
+     box-shadow: 0px 0px 5px 0px rgb(161, 163, 164)
+ }
+
+.media img{
+      
+    width: 60px;
+    height: 60px;
+}
+
+
+.reply a {
+    
+    text-decoration: none;
+}
+
+/* detail */
+#detailimg{
+	width: 80px;
+	height: 80px;
+	border-radius: 50%;
+}

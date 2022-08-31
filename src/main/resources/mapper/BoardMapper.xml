@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="board">
+
+	<resultMap type="reply" id="replyResultMap">
+		<result column="REPLY_IDX" property="replyIdx" />
+		<result column="BOARD_IDX" property="boardIdx" />
+		<result column="REPLY_WRITER" property="replyWriter" />
+		<result column="REPLY_CONTENT" property="replyContetn" />
+		<result column="REPLY_RESTEP" property="replyRestep" />
+		<result column="REPLY_RELEVEL" property="replyRelevel" />
+		<result column="REPLY_REGIDATE" property="replyRegidate" />
+		<collection column="USER_NAME" property="userName" />
+	</resultMap>
+
+	<resultMap type="member" id="memberResultMap">
+		<result column="USER_EMAIL" property="userEmail" />
+		<result column="USER_NAME" property="userName" />
+		<result column="USER_PASSWORD" property="userPassword" />
+		<result column="USER_AUTH" property="userAuth" />
+	</resultMap>
+	
+	<resultMap type="board" id="boardMap">
+		<result column="BOARD_IDX" property="boardIdx"/>
+		<result column="BOARD_WRITER" property="boardWriter"/>
+		<result column="BOARD_TITLE" property="boardTitle"/>
+		<result column="BOARD_CONTENT" property="boardContent"/>
+		<result column="BOARD_URL" property="boardUrl"/>
+		<result column="BOARD_VIEWS" property="boardViews"/>
+		<result column="BOARD_LIKES" property="boardLikes"/>
+		<result column="BOARD_DISLIKES" property="boardDislikes"/>
+		<result column="BOARD_REGIDATE" property="boardRegidate"/>
+		<result column="BOARD_MODIFYDATE" property="boardModifydate"/>
+		<result column="BOARD_THUM" property="boardThum"/>
+	</resultMap>
+	
+	<resultMap type="expression" id="expressionMap">
+		<result column="idx" property="exIdx"/>
+		<result column="boardidx" property="boardIdx"/>
+		<result column="user_email" property="userEmail"/>
+		<result column="user_expression" property="userExpression"/>
+		
+	</resultMap>
+
+
+	<!-- 영상 게시물 등록 -->
+	<insert id="addBoard">
+		INSERT INTO UTUBE_BOARD
+			(BOARD_IDX, BOARD_WRITER, BOARD_TITLE, BOARD_URL, BOARD_THUM, BOARD_CONTENT)
+		VALUES
+		(utube_board_seq.nextval, #{board_writer}, #{board_title}, #{board_url}, #{board_thum},	#{board_content})
+	</insert>
+
+	<!-- 계정별 등록 유튜브 내용 -->
+	<select id="getUserBoard" resultType="HashMap">
+		select b.BOARD_IDX, b.BOARD_WRITER, b.BOARD_TITLE, b.BOARD_CONTENT,b.BOARD_THUM,
+		 	   b.BOARD_URL, b.BOARD_VIEWS, b.BOARD_LIKES, b.BOARD_DISLIKES,
+			   b.BOARD_REGIDATE, m.USER_IMG , m.USER_NAME
+		from utube_board b
+			left join member_info m
+				on b.board_writer = m.user_email
+
+	</select>
+
+	<!-- 게시판 상세보기 -->
+	<select id="getBoardDetail" resultType="board">
+		SELECT * FROM UTUBE_BOARD WHERE BOARD_IDX = #{key}
+	</select>
+
+	<!-- 게시묿 별 댓글리스트 -->
+	<select id="getboard_ReplyList" resultType="HashMap" parameterType="int">
+		select * from
+		(select
+		r.REPLY_IDX,r.BOARD_IDX,r.REPLY_WRITER,r.REPLY_CONTENT,r.REPLY_RESTEP,r.REPLY_RELEVEL,r.REPLY_REGIDATE,
+		info.user_name, info.user_img
+		from utube_reply r
+		left outer join member_info info on r.reply_writer = info.user_email
+		where r.board_idx= #{boardIdx} 
+		order by r.reply_restep , r.reply_relevel, r.reply_idx asc 
+		)
+	</select>
+
+	<!-- -댓글 추가 -->
+	<insert id="board_ReplyAdd" parameterType="hashMap">
+		insert into utube_reply (reply_idx, board_idx, reply_writer, reply_content,
+		reply_restep, reply_relevel)
+		values(reply_seq.nextval, #{boardidx}, #{writer}, #{content}, reply_step_seq.nextval, #{level})
+	</insert>
+
+	
+	<select id="board_getboardList" resultType="HashMap">
+		select * from utube_board
+	</select>
+	
+
+	<!-- -조회수 증가 -->
+	<update id="addViews" >
+		update utube_board
+                set board_views = board_views+1
+                where board_idx = #{board_idx}
+	</update>
+	
+	<!-- -좋아요 증가 -->
+	<update id="boardLikesAdd" >
+		update utube_board
+				set board_likes = board_likes + 1
+				where board_idx= #{boardkey}			
+	</update>
+	
+	
+	<!-- -좋아요 수 -->
+	<select id="likescnt" resultType="int">
+		select BOARD_LIKES, BOARD_DISLIKES from utube_board 
+		where board_idx=#{boardkey}
+	</select>
+	
+	
+	
+	
+	<!-- -좋아요 -1 -->
+	<update id="boardLikesSub" parameterType="int" >
+		<!-- <selectKey keyProperty="boardIdx" resultType="java.lang.Integer"  order="BEFORE"  >
+				select board_likes from utube_board where board_idx = #{boardkey}
+		</selectKey> 
+		-->
+		update utube_board
+		set board_likes = board_likes - 1
+				<!-- <choose>
+					<when test='idx > 0'>
+						set board_likes = board_likes - 1
+						
+					</when>
+					
+					<otherwise>
+						set board_likes = board_likes
+					</otherwise>
+				</choose> -->
+				where board_idx= #{boardkey}
+	</update>
+	
+	<!-- -싫어요 증가 -->
+	<update id="boardDisLikesAdd"  parameterType="int">
+		update UTUBE_BOARD
+				set BOARD_DISLIKES = BOARD_DISLIKES + 1
+				where BOARD_IDX= #{boardkey}			
+	</update>
+	
+	
+	<!-- -싫어요-1 감소 -->
+	<update id="boardDislikesSub" parameterType="int" >
+		update UTUBE_BOARD
+				set BOARD_DISLIKES = BOARD_DISLIKES - 1
+				where BOARD_IDX= #{boardkey}	
+	</update>
+	
+	
+	
+	
+	
+	<!-- -1 : 좋아요, 0: 싫어요. -->
+	<select id="ExpressionList" resultType="expression" parameterType="expression">
+		select * from Expression 
+			where BOARDIDX = ${boardidx} and USER_EMAIL = #{user_email}
+	</select>
+	
+	
+	<!-- 표현 flag 삽입 -->
+	<insert id="AddExpression" parameterType="Map">
+		insert into expression(idx, boardidx,user_email, user_expression)
+		values(expression_seq.nextval, #{boardkey}, #{user_email}, #{user_expression})
+	</insert>
+	
+	
+	<!-- -flag 수정 -->
+	<delete id="DelExpression" parameterType="expression"> 
+		delete expression
+			where boardidx = #{boardidx} and user_email = #{user_email}
+	</delete>
+	
+	<!-- -싫어요 표현 수정 -->
+	<update id="UpExpression" parameterType="expression">
+		update expression
+			set user_expression = #{user_expression}
+			where boardidx=#{boardidx} and user_email = #{user_email}
+	</update>
+	
+	<!-- -댓글의 최대  level 구하기.  -->
+	<select id="board_maxRelebel" resultType="int" parameterType="reply">
+		select max(reply_relevel) from utube_reply where board_idx=#{board_idx}
+	</select>
+	
+	<insert id="board_reReplyAdd" parameterType="HashMap">
+		insert into utube_reply
+		(REPLY_IDX, BOARD_IDX,REPLY_WRITER,REPLY_CONTENT,REPLY_RESTEP,REPLY_RELEVEL)
+		values
+		(reply_seq.nextval, #{boardidx}, #{writer}, #{content}, #{restep}, #{level})
+		
+	</insert>
+	
+	<select id="board_SearchData" resultType="hashMap" >
+		select u.BOARD_IDX, u.BOARD_WRITER, u.BOARD_TITLE, u.BOARD_CONTENT, u.BOARD_URL, u.BOARD_VIEWS, u.BOARD_LIKES, u.BOARD_DISLIKES, u.BOARD_REGIDATE, 
+              u.BOARD_THUM,
+              m.USER_EMAIL, m.USER_NAME, m.USER_IMG
+            
+       from utube_board u left outer join member_info m on u.board_writer = m.user_email
+        where u.board_writer like '%'|| #{reqParam} ||'%' or u.board_title like '%' || #{reqParam} ||'%'
+        
+	</select>
+	
+</mapper>
